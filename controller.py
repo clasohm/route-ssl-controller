@@ -9,10 +9,7 @@ if __name__ == "__main__":
     else:
         config.load_kube_config()
 
-    configuration = client.Configuration()
-    configuration.assert_hostname = False
-
-    api_client = client.CoreV1Api(configuration=configuration)
+    api_client = client.CoreV1Api()
 
     for event in watch.Watch().stream(api_client.list_pod_for_all_namespaces()):
         print("Event: %s %s %s" % (event['type'],event['object'].kind, event['object'].metadata.name))
