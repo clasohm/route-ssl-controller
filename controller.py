@@ -12,7 +12,7 @@ if __name__ == "__main__":
     configuration = client.Configuration()
     configuration.assert_hostname = False
 
-    api_client = client.api_client.ApiClient(configuration=configuration)
+    api_client = client.CoreV1Api(configuration=configuration)
 
-    for event in watch.Watch().stream(api_client.list_pod_for_all_namespaces):
+    for event in watch.Watch().stream(api_client.list_pod_for_all_namespaces()):
         print("Event: %s %s %s" % (event['type'],event['object'].kind, event['object'].metadata.name))
