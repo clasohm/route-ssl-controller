@@ -4,11 +4,15 @@ from kubernetes import client, config, watch
 import os
 
 if __name__ == "__main__":
-    config.load_kube_config()
+    if 'KUBERNETES_PORT' in os.environ:
+        config.load_incluster_config()
+    else:
+        config.load_kube_config()
 
-    api_instance = client.CoreV1Api()
-    
-    print("Waiting for Routes to come up...")
+    configuration = client.Configuration()
+    configuration.assert_hostname = False
 
-    for event in watch.Watch().stream(api_instance.list_pod_for_all_namespaces):
+    api_client = client.api_client.ApiClient(configuration=configuration)
+
+    for event in watch.Watch().stream(api_client.list_pod_for_all_namespaces):
         print("Event: %s %s %s" % (event['type'],event['object'].kind, event['object'].metadata.name))
